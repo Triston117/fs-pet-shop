@@ -1,15 +1,13 @@
 import fs from "fs";
 import express from "express";
-app.use(express.json());
-
 const app = express();
+app.use(express.json());
+const pets = {};
 
 // Use middleware to parse request bodies
 app.use(bodyParser.json());
 
-const pets = {};
-
-// Create a new pet
+// new pet
 app.post("/pets", (req, res) => {
   const { name, age, kind } = req.body;
   const id = Object.keys(pets).length + 1;
@@ -20,7 +18,7 @@ app.post("/pets", (req, res) => {
 app.post("/pets", (req, res) => {
   const { name, age, kind } = req.body;
 
-  // Check that all required properties are present
+  // Check properties are present
   if (!name || !age || !kind || !Number.isInteger(age)) {
     res.status(400).send("Bad Request");
     return;
@@ -68,6 +66,11 @@ app.delete("/pets/:id", (req, res) => {
     delete pets[req.params.id];
     res.status(200).json(pet);
   }
+});
+
+// 404 Not Found middleware
+app.use((req, res) => {
+  res.status(404).send("Not Found");
 });
 
 app.listen(3000, () => {
